@@ -49,6 +49,8 @@ int init() {
                     if (gGameController == NULL) {
                         printf("Warning: unable to open game controller! SDL Error%s\n", SDL_GetError());
                         success = 0;
+                    } else {
+                        printf("Joystick found with %d axes\n", SDL_JoystickNumAxes(gGameController));
                     }
                 }
             }
@@ -62,7 +64,28 @@ int loadMedia() {
     return success;
 }
 
+
 void loop() {
+
+    const int STICK_DEADZONE = 8000;
+
+    int quit = 0;
+    SDL_Event e;
+    while (!quit) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                quit = 1;
+            } else if (e.type == SDL_JOYAXISMOTION) {
+                if (e.jaxis.axis == 0) {
+                    if (e.jaxis.value < -STICK_DEADZONE ||
+                        e.jaxis.value > STICK_DEADZONE) {
+                        printf("%d joytick moving to value %d\n", e.jaxis.axis, e.jaxis.value);
+                    }
+                }
+            }
+        }
+        // update texture here
+    }
 
 }
 

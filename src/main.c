@@ -5,7 +5,11 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 static const int LEFT_STICK_X_AXIS = 0;
+static const int LEFT_STICK_Y_AXIS = 1;
 static const int RIGHT_STICK_X_AXIS = 3;
+static const int RIGHT_STICK_Y_AXIS = 4;
+static const int LEFT_TRIGGER_AXIS = 2;
+static const int RIGHT_TRIGGER_AXIS = 5;
 SDL_Renderer *gRenderer;
 SDL_Window *gWindow;
 SDL_Joystick *gGameController;
@@ -78,11 +82,17 @@ void loop() {
             if (e.type == SDL_QUIT) {
                 quit = 1;
             } else if (e.type == SDL_JOYAXISMOTION) {
-                if (e.jaxis.axis == LEFT_STICK_X_AXIS || e.jaxis.axis == RIGHT_STICK_X_AXIS) {
+                if (e.jaxis.axis == LEFT_STICK_X_AXIS
+                    || e.jaxis.axis == LEFT_STICK_Y_AXIS
+                    || e.jaxis.axis == RIGHT_STICK_X_AXIS
+                    || e.jaxis.axis == RIGHT_STICK_Y_AXIS) {
                     if (e.jaxis.value < -STICK_DEADZONE ||
                         e.jaxis.value > STICK_DEADZONE) {
-                        printf("%d joytick moving to value %d\n", e.jaxis.axis, e.jaxis.value);
+                        printf("%d joystick moving to value %d\n", e.jaxis.axis, e.jaxis.value);
                     }
+                } else if (e.jaxis.axis == LEFT_TRIGGER_AXIS
+                        || e.jaxis.axis == RIGHT_TRIGGER_AXIS) {
+                    printf("%d trigger moving to value %d\n", e.jaxis.axis, e.jaxis.value);
                 }
             }
         }

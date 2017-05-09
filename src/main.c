@@ -78,7 +78,8 @@ int init() {
                         printf("Warning: unable to open game controller! SDL Error%s\n", SDL_GetError());
                         success = 0;
                     } else {
-                        printf("Joystick found with %d axes\n", SDL_JoystickNumAxes(gGameController));
+                        printf("Joystick found with %d axes ", SDL_JoystickNumAxes(gGameController));
+                        printf("and %d buttons", SDL_JoystickNumButtons(gGameController));
                     }
                 }
             }

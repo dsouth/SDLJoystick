@@ -4,12 +4,34 @@
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-static const int LEFT_STICK_X_AXIS = 0;
-static const int LEFT_STICK_Y_AXIS = 1;
-static const int RIGHT_STICK_X_AXIS = 3;
-static const int RIGHT_STICK_Y_AXIS = 4;
-static const int LEFT_TRIGGER_AXIS = 2;
-static const int RIGHT_TRIGGER_AXIS = 5;
+enum axes {
+    LEFT_STICK_X_AXIS = 0,
+    LEFT_STICK_Y_AXIS = 1,
+    LEFT_TRIGGER_AXIS = 2,
+    RIGHT_STICK_X_AXIS = 3,
+    RIGHT_STICK_Y_AXIS = 4,
+    RIGHT_TRIGGER_AXIS = 5,
+};
+
+enum buttons {
+    BUTTON_A = 0,
+    BUTTON_B = 1,
+    BUTTON_X = 2,
+    BUTTON_Y = 3,
+    LEFT_BUMPER = 4,
+    RIGHT_BUMPTER = 5,
+    LEFT_STICK = 6,
+    RIGHT_STICK = 7,
+    START = 8,
+    BACK = 9,
+    X_BOX = 10,
+    DPAD_UP = 11,
+    DPAD_DOWN = 12,
+    DPAD_LEFT = 13,
+    DPATH_RIGHT = 14,
+};
+
+
 SDL_Renderer *gRenderer;
 SDL_Window *gWindow;
 SDL_Joystick *gGameController;
@@ -94,6 +116,10 @@ void loop() {
                         || e.jaxis.axis == RIGHT_TRIGGER_AXIS) {
                     printf("%d trigger moving to value %d\n", e.jaxis.axis, e.jaxis.value);
                 }
+            } else if (e.type == SDL_JOYBUTTONDOWN) {
+                printf("%d button pressed\n", e.jbutton.button);
+            } else if (e.type == SDL_JOYBUTTONUP) {
+                printf("%d button released\n", e.jbutton.button);
             }
         }
         // update texture here

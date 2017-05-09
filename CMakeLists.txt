@@ -3,7 +3,7 @@ project(joystick)
 
 set(CMAKE_C_STANDARD 99)
 
-set(SOURCE_FILES main.c)
+set(SOURCE_FILES src/main.c)
 
 include_directories(/usr/local/include/)
 link_directories(/usr/local/lib)

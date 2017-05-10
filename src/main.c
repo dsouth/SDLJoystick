@@ -73,14 +73,20 @@ void render_stick(int bx, int by, int x, int y) {
     SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_Rect r = {bx, by, 140, 140};
     SDL_RenderDrawRect(gRenderer, &r);
-
     for (int i = by + 66; i < by + 73; i++) {
         SDL_RenderDrawLine(gRenderer, x + bx + 66,
                            i + y, x + bx + 73, i + y);
     }
-
 }
 
+void render_trigger(int bx, int by, int x) {
+    x = (x / 512) + 64;
+    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
+    SDL_Rect r = {bx, by, 18, 129};
+    SDL_RenderDrawRect(gRenderer, &r);
+    SDL_Rect bar = {bx + 1, 128 - x + by, 16, x};
+    SDL_RenderFillRect(gRenderer, &bar);
+}
 
 void loop() {
 
@@ -102,6 +108,8 @@ void loop() {
 
         render_stick(5, 5, s.left_x_axis, s.left_y_axis);
         render_stick(150, 5, s.right_x_axis, s.right_y_axis);
+        render_trigger(295, 5, s.left_trigger);
+        render_trigger(315, 5, s.right_trigger);
 
         SDL_RenderPresent(gRenderer);
         // update texture here

@@ -77,6 +77,7 @@ int init() {
                     } else {
                         printf("Joystick found with %d axes ", SDL_JoystickNumAxes(gGameController));
                         printf("and %d buttons\n", SDL_JoystickNumButtons(gGameController));
+                        SDL_SetWindowTitle(gWindow, SDL_JoystickNameForIndex(0));
                     }
                 }
             }

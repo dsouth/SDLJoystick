@@ -3,12 +3,22 @@
 
 #include "controller.h"
 
+typedef struct texture texture;
+
+struct texture {
+    SDL_Texture *t;
+    int w;
+    int h;
+};
+
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 SDL_Renderer *gRenderer;
 SDL_Window *gWindow;
 SDL_Joystick *gGameController;
+texture *button_a;
+texture *button_a_pressed;
 
 int init() {
     int success;
@@ -53,7 +63,7 @@ int init() {
                         success = 0;
                     } else {
                         printf("Joystick found with %d axes ", SDL_JoystickNumAxes(gGameController));
-                        printf("and %d buttons", SDL_JoystickNumButtons(gGameController));
+                        printf("and %d buttons\n", SDL_JoystickNumButtons(gGameController));
                     }
                 }
             }
@@ -62,9 +72,28 @@ int init() {
     return success;
 }
 
+texture *load_texture(const char *f) {
+    texture *t = NULL;
+    SDL_Surface *s = IMG_Load(f);
+    if (s == NULL) {
+        printf("Unable to load image %s! SDL_image Error: %s\n", f, IMG_GetError());
+    } else {
+        t = (texture *) malloc(sizeof(texture));
+        t->t = SDL_CreateTextureFromSurface(gRenderer, s);
+        if (t->t == NULL) {
+            printf("Unable to create texture from %s! SDL Error: %s\n", f, SDL_GetError());
+        }
+        t->w = s->w;
+        t->h = s->h;
+        SDL_FreeSurface(s);
+    }
+    return t;
+}
+
 int loadMedia() {
-    int success = 1;
-    return success;
+    button_a = load_texture("res/button_a.png");
+    button_a_pressed = load_texture("res/button_a_pressed.png");
+    return button_a != NULL && button_a_pressed != NULL;
 }
 
 void render_stick(int bx, int by, int x, int y) {
@@ -86,6 +115,16 @@ void render_trigger(int bx, int by, int x) {
     SDL_RenderDrawRect(gRenderer, &r);
     SDL_Rect bar = {bx + 1, 128 - x + by, 16, x};
     SDL_RenderFillRect(gRenderer, &bar);
+}
+
+void render_button(texture* on,
+                   texture* off,
+                   Uint8 state,
+                   int x,
+                   int y) {
+    texture* t = state == SDL_PRESSED ? on : off;
+    SDL_Rect r = {x, y, t->w, t->h};
+    SDL_RenderCopy(gRenderer, t->t, NULL, &r);
 }
 
 void loop() {
@@ -111,15 +150,34 @@ void loop() {
         render_trigger(295, 5, s.left_trigger);
         render_trigger(315, 5, s.right_trigger);
 
+       render_button(button_a_pressed, button_a, s.button_a, 5, 155);
+
         SDL_RenderPresent(gRenderer);
         // update texture here
     }
 
 }
 
+void free_texture(texture* t) {
+    if (t != NULL) {
+        SDL_DestroyTexture(t->t);
+        free(t);
+    }
+}
+
+void free_resources() {
+    free_texture(button_a);
+    free_texture(button_a_pressed);
+    if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
+    if (gWindow != NULL) SDL_DestroyWindow(gWindow);
+    IMG_Quit();
+    SDL_Quit();
+}
+
 int main() {
+    atexit(free_resources);
     if (!init()) {
-        printf("Falied to init! SDL Error: %s\n", SDL_GetError());
+        printf("Failed to init! SDL Error: %s\n", SDL_GetError());
     } else if (!loadMedia()) {
         printf("Failed to load media!\n");
     } else {

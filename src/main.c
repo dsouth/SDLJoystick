@@ -33,6 +33,10 @@ texture *dpad_left;
 texture *dpad_left_pressed;
 texture *dpad_right;
 texture *dpad_right_pressed;
+texture *start;
+texture *start_pressed;
+texture *select;
+texture *select_pressed;
 
 int init() {
     int success;
@@ -121,6 +125,11 @@ int loadMedia() {
     dpad_left_pressed = load_texture("../res/dpad_left_pressed.png");
     dpad_right = load_texture("../res/dpad_right.png");
     dpad_right_pressed = load_texture("../res/dpad_right_pressed.png");
+    start = load_texture("../res/start.png");
+    start_pressed = load_texture("../res/start_pressed.png");
+    select = load_texture("../res/select.png");
+    select_pressed = load_texture("../res/select_pressed.png");
+
     return button_a != NULL && button_a_pressed != NULL
            && button_b != NULL && button_b_pressed != NULL
            && button_x != NULL && button_x_pressed != NULL
@@ -196,6 +205,16 @@ void render_dpad(controller_state s, int x, int y) {
     render_button(dpad_right_pressed, dpad_right, s.dpad_right, x + 75, y + 45);
 }
 
+void render_bumber(int x1, int y1, Uint8 state) {
+    set_color_black();
+    SDL_Rect r = {x1, y1, 140, 30};
+    if (state == SDL_PRESSED) {
+        SDL_RenderFillRect(gRenderer, &r);
+    } else {
+        SDL_RenderDrawRect(gRenderer, &r);
+    }
+}
+
 void loop() {
 
     controller_state s;
@@ -214,13 +233,19 @@ void loop() {
         set_color_white();
         SDL_RenderClear(gRenderer);
 
-        render_stick(5, 5, s.left_x_axis, s.left_y_axis, s.left_stick);
-        render_stick(150, 5, s.right_x_axis, s.right_y_axis, s.right_stick);
-        render_trigger(295, 5, s.left_trigger);
-        render_trigger(315, 5, s.right_trigger);
+        render_bumber(5, 5, s.left_bumper);
+        render_bumber(150, 5, s.right_bumper);
 
-        render_abxy(s, 405, 5);
-        render_dpad(s, 55, 175);
+        render_stick(5, 40, s.left_x_axis, s.left_y_axis, s.left_stick);
+        render_stick(150, 40, s.right_x_axis, s.right_y_axis, s.right_stick);
+        render_trigger(295, 40, s.left_trigger);
+        render_trigger(315, 40, s.right_trigger);
+
+        render_abxy(s, 350, 40);
+        render_dpad(s, 55, 210);
+
+        render_button(select_pressed, select, s.button_back, 260, 220);
+        render_button(start_pressed, start, s.button_start, 370, 220);
 
         SDL_RenderPresent(gRenderer);
         // update texture here
@@ -252,6 +277,10 @@ void free_resources() {
     free_texture(dpad_left_pressed);
     free_texture(dpad_right);
     free_texture(dpad_right_pressed);
+    free_texture(start);
+    free_texture(start_pressed);
+    free_texture(select);
+    free_texture(select_pressed);
     if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
     if (gWindow != NULL) SDL_DestroyWindow(gWindow);
     IMG_Quit();

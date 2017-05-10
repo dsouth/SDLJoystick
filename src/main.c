@@ -179,24 +179,28 @@ void loop() {
     int quit = 0;
     SDL_Event e;
     while (!quit) {
-        set_color_white();
-        SDL_RenderClear(gRenderer);
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
             } else {
-                if (controller_event(e, &s)) {
-                    render_stick(5, 5, s.left_x_axis, s.left_y_axis, s.left_stick);
-                    render_stick(150, 5, s.right_x_axis, s.right_y_axis, s.right_stick);
-                    render_trigger(295, 5, s.left_trigger);
-                    render_trigger(315, 5, s.right_trigger);
-
-                    render_abxy(s, 405, 5);
-                }
+                controller_event(e, &s);
             }
         }
+
+        set_color_white();
+        SDL_RenderClear(gRenderer);
+
+        render_stick(5, 5, s.left_x_axis, s.left_y_axis, s.left_stick);
+        render_stick(150, 5, s.right_x_axis, s.right_y_axis, s.right_stick);
+        render_trigger(295, 5, s.left_trigger);
+        render_trigger(315, 5, s.right_trigger);
+
+        render_abxy(s, 405, 5);
+
         SDL_RenderPresent(gRenderer);
+        // update texture here
     }
+
 }
 
 void free_texture(texture *t) {

@@ -29,6 +29,7 @@ void set_button_state(SDL_Event e, Uint8 button_state, controller_state *s) {
             break;
         case RIGHT_STICK:
             s->right_stick = button_state;
+            break;
         case START_BUTTON:
             s->button_start = button_state;
             break;

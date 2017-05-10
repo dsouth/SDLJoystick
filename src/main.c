@@ -37,6 +37,8 @@ texture *start;
 texture *start_pressed;
 texture *select;
 texture *select_pressed;
+texture *x_box;
+texture *x_box_pressed;
 
 int init() {
     int success;
@@ -129,6 +131,8 @@ int loadMedia() {
     start_pressed = load_texture("../res/start_pressed.png");
     select = load_texture("../res/select.png");
     select_pressed = load_texture("../res/select_pressed.png");
+    x_box = load_texture("../res/x_box.png");
+    x_box_pressed = load_texture("../res/x_box_pressed.png");
 
     return button_a != NULL && button_a_pressed != NULL
            && button_b != NULL && button_b_pressed != NULL
@@ -245,7 +249,8 @@ void loop() {
         render_dpad(s, 55, 210);
 
         render_button(select_pressed, select, s.button_back, 260, 220);
-        render_button(start_pressed, start, s.button_start, 370, 220);
+        render_button(x_box_pressed, x_box, s.button_x_box, 373, 220);
+        render_button(start_pressed, start, s.button_start, 426, 220);
 
         SDL_RenderPresent(gRenderer);
         // update texture here
@@ -281,6 +286,8 @@ void free_resources() {
     free_texture(start_pressed);
     free_texture(select);
     free_texture(select_pressed);
+    free_texture(x_box);
+    free_texture(x_box_pressed);
     if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
     if (gWindow != NULL) SDL_DestroyWindow(gWindow);
     IMG_Quit();

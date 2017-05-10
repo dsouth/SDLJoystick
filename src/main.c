@@ -19,6 +19,12 @@ SDL_Window *gWindow;
 SDL_Joystick *gGameController;
 texture *button_a;
 texture *button_a_pressed;
+texture *button_b;
+texture *button_b_pressed;
+texture *button_x;
+texture *button_x_pressed;
+texture *button_y;
+texture *button_y_pressed;
 
 int init() {
     int success;
@@ -41,7 +47,6 @@ int init() {
                 printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
                 success = 0;
             } else {
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 success = 1;
 
                 int imgFlags = IMG_INIT_PNG;
@@ -91,17 +96,49 @@ texture *load_texture(const char *f) {
 }
 
 int loadMedia() {
-    button_a = load_texture("res/button_a.png");
-    button_a_pressed = load_texture("res/button_a_pressed.png");
-    return button_a != NULL && button_a_pressed != NULL;
+    button_a = load_texture("../res/button_a.png");
+    button_a_pressed = load_texture("../res/button_a_pressed.png");
+    button_b = load_texture("../res/button_b.png");
+    button_b_pressed = load_texture("../res/button_b_pressed.png");
+    button_x = load_texture("../res/button_x.png");
+    button_x_pressed = load_texture("../res/button_x_pressed.png");
+    button_y = load_texture("../res/button_y.png");
+    button_y_pressed = load_texture("../res/button_y_pressed.png");
+    return button_a != NULL && button_a_pressed != NULL
+           && button_b != NULL && button_b_pressed != NULL
+           && button_x != NULL && button_x_pressed != NULL
+           && button_y != NULL && button_y_pressed != NULL;
 }
 
-void render_stick(int bx, int by, int x, int y) {
+void set_color_white() {
+    SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
+}
+
+void set_color_black() {
+    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
+}
+
+void render_stick(int bx,
+                  int by,
+                  int x,
+                  int y,
+                  Uint8 button) {
     x = x / 512;
     y = y / 512;
-    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_Rect r = {bx, by, 140, 140};
+    if (button == SDL_PRESSED) {
+        set_color_black();
+        SDL_RenderFillRect(gRenderer, &r);
+        set_color_white();
+    } else {
+        set_color_black();
+    }
     SDL_RenderDrawRect(gRenderer, &r);
+    if (button == SDL_PRESSED) {
+        set_color_white();
+    } else {
+        set_color_black();
+    }
     for (int i = by + 66; i < by + 73; i++) {
         SDL_RenderDrawLine(gRenderer, x + bx + 66,
                            i + y, x + bx + 73, i + y);
@@ -109,22 +146,30 @@ void render_stick(int bx, int by, int x, int y) {
 }
 
 void render_trigger(int bx, int by, int x) {
+    set_color_black();
     x = (x / 512) + 64;
-    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_Rect r = {bx, by, 18, 129};
     SDL_RenderDrawRect(gRenderer, &r);
     SDL_Rect bar = {bx + 1, 128 - x + by, 16, x};
     SDL_RenderFillRect(gRenderer, &bar);
 }
 
-void render_button(texture* on,
-                   texture* off,
+void render_button(texture *on,
+                   texture *off,
                    Uint8 state,
                    int x,
                    int y) {
-    texture* t = state == SDL_PRESSED ? on : off;
+    texture *t = state == SDL_PRESSED ? on : off;
     SDL_Rect r = {x, y, t->w, t->h};
     SDL_RenderCopy(gRenderer, t->t, NULL, &r);
+}
+
+void render_abxy(controller_state s, int x, int y) {
+    render_button(button_a_pressed, button_a, s.button_a, x + 75, y + 85);
+    render_button(button_b_pressed, button_b, s.button_b, x + 150, y + 47);
+    render_button(button_x_pressed, button_x, s.button_x, x, y + 47);
+    render_button(button_y_pressed, button_y, s.button_y, x + 75, y);
+
 }
 
 void loop() {
@@ -134,31 +179,27 @@ void loop() {
     int quit = 0;
     SDL_Event e;
     while (!quit) {
+        set_color_white();
+        SDL_RenderClear(gRenderer);
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
             } else {
-                controller_event(e, &s);
+                if (controller_event(e, &s)) {
+                    render_stick(5, 5, s.left_x_axis, s.left_y_axis, s.left_stick);
+                    render_stick(150, 5, s.right_x_axis, s.right_y_axis, s.right_stick);
+                    render_trigger(295, 5, s.left_trigger);
+                    render_trigger(315, 5, s.right_trigger);
+
+                    render_abxy(s, 405, 5);
+                }
             }
         }
-
-        SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
-        SDL_RenderClear(gRenderer);
-
-        render_stick(5, 5, s.left_x_axis, s.left_y_axis);
-        render_stick(150, 5, s.right_x_axis, s.right_y_axis);
-        render_trigger(295, 5, s.left_trigger);
-        render_trigger(315, 5, s.right_trigger);
-
-       render_button(button_a_pressed, button_a, s.button_a, 5, 155);
-
         SDL_RenderPresent(gRenderer);
-        // update texture here
     }
-
 }
 
-void free_texture(texture* t) {
+void free_texture(texture *t) {
     if (t != NULL) {
         SDL_DestroyTexture(t->t);
         free(t);
@@ -168,6 +209,12 @@ void free_texture(texture* t) {
 void free_resources() {
     free_texture(button_a);
     free_texture(button_a_pressed);
+    free_texture(button_b);
+    free_texture(button_b_pressed);
+    free_texture(button_x);
+    free_texture(button_x_pressed);
+    free_texture(button_y);
+    free_texture(button_y_pressed);
     if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
     if (gWindow != NULL) SDL_DestroyWindow(gWindow);
     IMG_Quit();

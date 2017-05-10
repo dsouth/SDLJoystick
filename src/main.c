@@ -25,6 +25,14 @@ texture *button_x;
 texture *button_x_pressed;
 texture *button_y;
 texture *button_y_pressed;
+texture *dpad_up;
+texture *dpad_up_pressed;
+texture *dpad_down;
+texture *dpad_down_pressed;
+texture *dpad_left;
+texture *dpad_left_pressed;
+texture *dpad_right;
+texture *dpad_right_pressed;
 
 int init() {
     int success;
@@ -104,6 +112,14 @@ int loadMedia() {
     button_x_pressed = load_texture("../res/button_x_pressed.png");
     button_y = load_texture("../res/button_y.png");
     button_y_pressed = load_texture("../res/button_y_pressed.png");
+    dpad_up = load_texture("../res/dpad_up.png");
+    dpad_up_pressed = load_texture("../res/dpad_up_pressed.png");
+    dpad_down = load_texture("../res/dpad_down.png");
+    dpad_down_pressed = load_texture("../res/dpad_down_pressed.png");
+    dpad_left = load_texture("../res/dpad_left.png");
+    dpad_left_pressed = load_texture("../res/dpad_left_pressed.png");
+    dpad_right = load_texture("../res/dpad_right.png");
+    dpad_right_pressed = load_texture("../res/dpad_right_pressed.png");
     return button_a != NULL && button_a_pressed != NULL
            && button_b != NULL && button_b_pressed != NULL
            && button_x != NULL && button_x_pressed != NULL
@@ -172,6 +188,13 @@ void render_abxy(controller_state s, int x, int y) {
 
 }
 
+void render_dpad(controller_state s, int x, int y) {
+    render_button(dpad_up_pressed, dpad_up, s.dpad_up, x + 45, y);
+    render_button(dpad_down_pressed, dpad_down, s.dpad_down, x + 45, y + 75);
+    render_button(dpad_left_pressed, dpad_left, s.dpad_left, x, y + 45);
+    render_button(dpad_right_pressed, dpad_right, s.dpad_right, x + 75, y + 45);
+}
+
 void loop() {
 
     controller_state s;
@@ -196,6 +219,7 @@ void loop() {
         render_trigger(315, 5, s.right_trigger);
 
         render_abxy(s, 405, 5);
+        render_dpad(s, 55, 175);
 
         SDL_RenderPresent(gRenderer);
         // update texture here
@@ -219,6 +243,14 @@ void free_resources() {
     free_texture(button_x_pressed);
     free_texture(button_y);
     free_texture(button_y_pressed);
+    free_texture(dpad_up);
+    free_texture(dpad_up_pressed);
+    free_texture(dpad_down);
+    free_texture(dpad_down_pressed);
+    free_texture(dpad_left);
+    free_texture(dpad_left_pressed);
+    free_texture(dpad_right);
+    free_texture(dpad_right_pressed);
     if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
     if (gWindow != NULL) SDL_DestroyWindow(gWindow);
     IMG_Quit();

@@ -67,6 +67,20 @@ int loadMedia() {
     return success;
 }
 
+void render_stick(int bx, int by, int x, int y) {
+    x = x / 512;
+    y = y / 512;
+    SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
+    SDL_Rect r = {bx, by, 140, 140};
+    SDL_RenderDrawRect(gRenderer, &r);
+
+    for (int i = by + 66; i < by + 73; i++) {
+        SDL_RenderDrawLine(gRenderer, x + bx + 66,
+                           i + y, x + bx + 73, i + y);
+    }
+
+}
+
 
 void loop() {
 
@@ -86,16 +100,8 @@ void loop() {
         SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
         SDL_RenderClear(gRenderer);
 
-        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
-        SDL_Rect r = {6, 6, 133, 133};
-        SDL_RenderDrawRect(gRenderer, &r);
-
-        int x = s.left_x_axis / 512;
-        int y = s.left_y_axis / 512;
-
-        for (int i = 71; i < 77; i++) {
-            SDL_RenderDrawLine(gRenderer, 71 + x, i + y, 77 + x, i + y);
-        }
+        render_stick(5, 5, s.left_x_axis, s.left_y_axis);
+        render_stick(150, 5, s.right_x_axis, s.right_y_axis);
 
         SDL_RenderPresent(gRenderer);
         // update texture here

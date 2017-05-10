@@ -1,36 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "controller.h"
+
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-
-enum axes {
-    LEFT_STICK_X_AXIS = 0,
-    LEFT_STICK_Y_AXIS = 1,
-    LEFT_TRIGGER_AXIS = 2,
-    RIGHT_STICK_X_AXIS = 3,
-    RIGHT_STICK_Y_AXIS = 4,
-    RIGHT_TRIGGER_AXIS = 5,
-};
-
-enum buttons {
-    BUTTON_A = 0,
-    BUTTON_B = 1,
-    BUTTON_X = 2,
-    BUTTON_Y = 3,
-    LEFT_BUMPER = 4,
-    RIGHT_BUMPTER = 5,
-    LEFT_STICK = 6,
-    RIGHT_STICK = 7,
-    START = 8,
-    BACK = 9,
-    X_BOX = 10,
-    DPAD_UP = 11,
-    DPAD_DOWN = 12,
-    DPAD_LEFT = 13,
-    DPATH_RIGHT = 14,
-};
-
 
 SDL_Renderer *gRenderer;
 SDL_Window *gWindow;
@@ -97,6 +71,7 @@ int loadMedia() {
 void loop() {
 
     const int STICK_DEADZONE = 8000;
+    controller_state s;
 
     int quit = 0;
     SDL_Event e;
@@ -104,23 +79,8 @@ void loop() {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
-            } else if (e.type == SDL_JOYAXISMOTION) {
-                if (e.jaxis.axis == LEFT_STICK_X_AXIS
-                    || e.jaxis.axis == LEFT_STICK_Y_AXIS
-                    || e.jaxis.axis == RIGHT_STICK_X_AXIS
-                    || e.jaxis.axis == RIGHT_STICK_Y_AXIS) {
-                    if (e.jaxis.value < -STICK_DEADZONE ||
-                        e.jaxis.value > STICK_DEADZONE) {
-                        printf("%d joystick moving to value %d\n", e.jaxis.axis, e.jaxis.value);
-                    }
-                } else if (e.jaxis.axis == LEFT_TRIGGER_AXIS
-                        || e.jaxis.axis == RIGHT_TRIGGER_AXIS) {
-                    printf("%d trigger moving to value %d\n", e.jaxis.axis, e.jaxis.value);
-                }
-            } else if (e.type == SDL_JOYBUTTONDOWN) {
-                printf("%d button pressed\n", e.jbutton.button);
-            } else if (e.type == SDL_JOYBUTTONUP) {
-                printf("%d button released\n", e.jbutton.button);
+            } else {
+                controller_event(e, &s);
             }
         }
         // update texture here

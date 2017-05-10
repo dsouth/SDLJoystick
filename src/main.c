@@ -70,7 +70,6 @@ int loadMedia() {
 
 void loop() {
 
-    const int STICK_DEADZONE = 8000;
     controller_state s;
 
     int quit = 0;
@@ -83,6 +82,22 @@ void loop() {
                 controller_event(e, &s);
             }
         }
+
+        SDL_SetRenderDrawColor(gRenderer, 0xff, 0xff, 0xff, 0xff);
+        SDL_RenderClear(gRenderer);
+
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xff);
+        SDL_Rect r = {6, 6, 133, 133};
+        SDL_RenderDrawRect(gRenderer, &r);
+
+        int x = s.left_x_axis / 512;
+        int y = s.left_y_axis / 512;
+
+        for (int i = 71; i < 77; i++) {
+            SDL_RenderDrawLine(gRenderer, 71 + x, i + y, 77 + x, i + y);
+        }
+
+        SDL_RenderPresent(gRenderer);
         // update texture here
     }
 

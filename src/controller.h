@@ -61,8 +61,7 @@ struct controller_state {
     Uint8 dpad_right;
 };
 
-
-
+void init_controller_state(controller_state *s);
 int controller_event(SDL_Event e, controller_state* s);
 
 #endif //JOYSTICK_CONTROLLER_H

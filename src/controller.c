@@ -4,6 +4,31 @@
 #include <SDL2/SDL.h>
 #include "controller.h"
 
+
+void init_controller_state(controller_state *s) {
+    s->left_x_axis = 0;
+    s->left_y_axis = 0;
+    s->right_x_axis = 0;
+    s->right_y_axis = 0;
+    s->left_trigger = 0;
+    s->right_trigger = 0;
+    s->button_a = SDL_RELEASED;
+    s->button_b = SDL_RELEASED;
+    s->button_x = SDL_RELEASED;
+    s->button_y = SDL_RELEASED;
+    s->left_bumper = SDL_RELEASED;
+    s->right_bumper = SDL_RELEASED;
+    s->left_stick = SDL_RELEASED;
+    s->right_stick = SDL_RELEASED;
+    s->button_start = SDL_RELEASED;
+    s->button_back = SDL_RELEASED;
+    s->button_x_box = SDL_RELEASED;
+    s->dpad_up = SDL_RELEASED;
+    s->dpad_down = SDL_RELEASED;
+    s->dpad_left = SDL_RELEASED;
+    s->dpad_right = SDL_RELEASED;
+}
+
 void set_button_state(SDL_Event e, Uint8 button_state, controller_state *s) {
     switch (e.jbutton.button) {
         case BUTTON_A:

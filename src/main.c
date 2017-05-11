@@ -222,6 +222,7 @@ void render_bumber(int x1, int y1, Uint8 state) {
 void loop() {
 
     controller_state s;
+    init_controller_state(&s);
 
     int quit = 0;
     SDL_Event e;

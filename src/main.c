@@ -17,28 +17,9 @@ const int SCREEN_HEIGHT = 480;
 SDL_Renderer *gRenderer;
 SDL_Window *gWindow;
 SDL_Joystick *gGameController;
-texture *button_a;
-texture *button_a_pressed;
-texture *button_b;
-texture *button_b_pressed;
-texture *button_x;
-texture *button_x_pressed;
-texture *button_y;
-texture *button_y_pressed;
-texture *dpad_up;
-texture *dpad_up_pressed;
-texture *dpad_down;
-texture *dpad_down_pressed;
-texture *dpad_left;
-texture *dpad_left_pressed;
-texture *dpad_right;
-texture *dpad_right_pressed;
-texture *start;
-texture *start_pressed;
-texture *select;
-texture *select_pressed;
-texture *x_box;
-texture *x_box_pressed;
+static const int TOTAL_BUTTONS = 11;
+texture* button[TOTAL_BUTTONS];
+texture* button_pressed[TOTAL_BUTTONS];
 
 int init() {
     int success;
@@ -111,33 +92,34 @@ texture *load_texture(const char *f) {
 }
 
 int loadMedia() {
-    button_a = load_texture("../res/button_a.png");
-    button_a_pressed = load_texture("../res/button_a_pressed.png");
-    button_b = load_texture("../res/button_b.png");
-    button_b_pressed = load_texture("../res/button_b_pressed.png");
-    button_x = load_texture("../res/button_x.png");
-    button_x_pressed = load_texture("../res/button_x_pressed.png");
-    button_y = load_texture("../res/button_y.png");
-    button_y_pressed = load_texture("../res/button_y_pressed.png");
-    dpad_up = load_texture("../res/dpad_up.png");
-    dpad_up_pressed = load_texture("../res/dpad_up_pressed.png");
-    dpad_down = load_texture("../res/dpad_down.png");
-    dpad_down_pressed = load_texture("../res/dpad_down_pressed.png");
-    dpad_left = load_texture("../res/dpad_left.png");
-    dpad_left_pressed = load_texture("../res/dpad_left_pressed.png");
-    dpad_right = load_texture("../res/dpad_right.png");
-    dpad_right_pressed = load_texture("../res/dpad_right_pressed.png");
-    start = load_texture("../res/start.png");
-    start_pressed = load_texture("../res/start_pressed.png");
-    select = load_texture("../res/select.png");
-    select_pressed = load_texture("../res/select_pressed.png");
-    x_box = load_texture("../res/x_box.png");
-    x_box_pressed = load_texture("../res/x_box_pressed.png");
+    button[0] = load_texture("../res/button_a.png");
+    button_pressed[0] = load_texture("../res/button_a_pressed.png");
+    button[1] = load_texture("../res/button_b.png");
+    button_pressed[1] = load_texture("../res/button_b_pressed.png");
+    button[2] = load_texture("../res/button_x.png");
+    button_pressed[2] = load_texture("../res/button_x_pressed.png");
+    button[3] = load_texture("../res/button_y.png");
+    button_pressed[3] = load_texture("../res/button_y_pressed.png");
+    button[4] = load_texture("../res/dpad_up.png");
+    button_pressed[4] = load_texture("../res/dpad_up_pressed.png");
+    button[5] = load_texture("../res/dpad_down.png");
+    button_pressed[5] = load_texture("../res/dpad_down_pressed.png");
+    button[6] = load_texture("../res/dpad_left.png");
+    button_pressed[6] = load_texture("../res/dpad_left_pressed.png");
+    button[7] = load_texture("../res/dpad_right.png");
+    button_pressed[7] = load_texture("../res/dpad_right_pressed.png");
+    button[8] = load_texture("../res/start.png");
+    button_pressed[8] = load_texture("../res/start_pressed.png");
+    button[9] = load_texture("../res/select.png");
+    button_pressed[9] = load_texture("../res/select_pressed.png");
+    button[10] = load_texture("../res/x_box.png");
+    button_pressed[10] = load_texture("../res/x_box_pressed.png");
 
-    return button_a != NULL && button_a_pressed != NULL
-           && button_b != NULL && button_b_pressed != NULL
-           && button_x != NULL && button_x_pressed != NULL
-           && button_y != NULL && button_y_pressed != NULL;
+    int result = 0;
+    for (int i = 0; i < TOTAL_BUTTONS; i++) {
+        result = button[i] && button_pressed[i];
+    }
+    return result;
 }
 
 void set_color_white() {
@@ -195,18 +177,18 @@ void render_button(texture *on,
 }
 
 void render_abxy(controller_state s, int x, int y) {
-    render_button(button_a_pressed, button_a, s.button_a, x + 75, y + 85);
-    render_button(button_b_pressed, button_b, s.button_b, x + 150, y + 47);
-    render_button(button_x_pressed, button_x, s.button_x, x, y + 47);
-    render_button(button_y_pressed, button_y, s.button_y, x + 75, y);
+    render_button(button_pressed[0], button[0], s.button_a, x + 75, y + 85);
+    render_button(button_pressed[1], button[1], s.button_b, x + 150, y + 47);
+    render_button(button_pressed[2], button[2], s.button_x, x, y + 47);
+    render_button(button_pressed[3], button[3], s.button_y, x + 75, y);
 
 }
 
 void render_dpad(controller_state s, int x, int y) {
-    render_button(dpad_up_pressed, dpad_up, s.dpad_up, x + 45, y);
-    render_button(dpad_down_pressed, dpad_down, s.dpad_down, x + 45, y + 75);
-    render_button(dpad_left_pressed, dpad_left, s.dpad_left, x, y + 45);
-    render_button(dpad_right_pressed, dpad_right, s.dpad_right, x + 75, y + 45);
+    render_button(button_pressed[4], button[4], s.dpad_up, x + 45, y);
+    render_button(button_pressed[5], button[5], s.dpad_down, x + 45, y + 75);
+    render_button(button_pressed[6], button[6], s.dpad_left, x, y + 45);
+    render_button(button_pressed[7], button[7], s.dpad_right, x + 75, y + 45);
 }
 
 void render_bumber(int x1, int y1, Uint8 state) {
@@ -249,9 +231,9 @@ void loop() {
         render_abxy(s, 350, 40);
         render_dpad(s, 55, 210);
 
-        render_button(select_pressed, select, s.button_back, 260, 220);
-        render_button(x_box_pressed, x_box, s.button_x_box, 373, 220);
-        render_button(start_pressed, start, s.button_start, 426, 220);
+        render_button(button_pressed[9], button[9], s.button_back, 260, 220);
+        render_button(button_pressed[10], button[10], s.button_x_box, 373, 220);
+        render_button(button_pressed[8], button[8], s.button_start, 426, 220);
 
         SDL_RenderPresent(gRenderer);
         // update texture here
@@ -267,28 +249,10 @@ void free_texture(texture *t) {
 }
 
 void free_resources() {
-    free_texture(button_a);
-    free_texture(button_a_pressed);
-    free_texture(button_b);
-    free_texture(button_b_pressed);
-    free_texture(button_x);
-    free_texture(button_x_pressed);
-    free_texture(button_y);
-    free_texture(button_y_pressed);
-    free_texture(dpad_up);
-    free_texture(dpad_up_pressed);
-    free_texture(dpad_down);
-    free_texture(dpad_down_pressed);
-    free_texture(dpad_left);
-    free_texture(dpad_left_pressed);
-    free_texture(dpad_right);
-    free_texture(dpad_right_pressed);
-    free_texture(start);
-    free_texture(start_pressed);
-    free_texture(select);
-    free_texture(select_pressed);
-    free_texture(x_box);
-    free_texture(x_box_pressed);
+    for (int i = 0; i < TOTAL_BUTTONS; i++) {
+        free_texture(button[i]);
+        free_texture(button_pressed[i]);
+    }
     if (gRenderer != NULL) SDL_DestroyRenderer(gRenderer);
     if (gWindow != NULL) SDL_DestroyWindow(gWindow);
     IMG_Quit();
